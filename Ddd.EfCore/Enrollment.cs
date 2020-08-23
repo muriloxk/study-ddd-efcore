@@ -2,7 +2,6 @@
 {
     public class Enrollment : Entity
     {
-
         public Grade Grade { get; private set; }
         public virtual Course Course { get; private set; }
         public virtual Student Student { get; private set; }

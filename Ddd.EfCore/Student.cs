@@ -9,7 +9,6 @@ namespace Ddd.EfCore
         public string Email { get; private set; }
         public virtual Course FavoriteCourse { get; private set; }
 
-        //private readonly List<Enrollment> _enrollments = new List<Enrollment>();
         private readonly List<Enrollment> _enrollments = new List<Enrollment>();
         public virtual IReadOnlyList<Enrollment> Enrollments => _enrollments.ToList();
 
@@ -28,7 +27,6 @@ namespace Ddd.EfCore
             Email = email;
             FavoriteCourse = favoriteCourse;
 
-    
             EnrollIn(FavoriteCourse, Grade.A);
         }
 

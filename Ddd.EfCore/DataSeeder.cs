@@ -16,12 +16,9 @@ namespace Ddd.EfCore
             studentMurilo.AddSubject(new Subject("Subject 1"));
             studentMurilo.AddSubject(new Subject("Subject 2"));
 
-   
             context.Students.Add(studentMurilo);
             context.Students.Add(studentJoao);
             context.Students.Add(studentJose);
-
-      
 
             context.SaveChanges();
         }
