@@ -1,25 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Ddd.EfCore
 {
     public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var connectionString = "Crmall";
-
+            var connectionString = GetConnectionString();
             Seed(connectionString);
+
+            var responseCheckStudent = Execute(studentController => studentController.CheckStudentFavoriteCourse(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
+            Console.WriteLine(responseCheckStudent);
+
+            var responseAddEnrollment = Execute(studentController => studentController.AddEnrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Chemistry.Id, Grade.A));
+            Console.WriteLine(responseAddEnrollment);
+
+            Console.ReadKey();
+        }
+
+        private static string Execute(Func<StudentController, string> func)
+        {
+            var connectionString = GetConnectionString();
 
             using (var context = new SchoolContext(connectionString, true))
             {
-                Student student = context.Students.Find(1L);
-                Console.WriteLine(JsonSerializer.Serialize(student));
+                var controller = new StudentController(context);
+                return func(controller);
             }
-
-            Console.ReadKey();
         }
 
         private static void Seed(string connectionString)
@@ -32,12 +46,14 @@ namespace Ddd.EfCore
 
         private static string GetConnectionString()
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                                    .SetBasePath(Directory.GetCurrentDirectory())
-                                    .AddJsonFile("appsettings.json")
-                                    .Build();
+            //IConfigurationRoot configuration = new ConfigurationBuilder()
+            //                        .SetBasePath(Directory.GetCurrentDirectory())
+            //                        .AddJsonFile("appsettings.json")
+            //                        .Build();
 
-            return configuration["ConnectionString"];
+            //return configuration["ConnectionString"];
+
+            return "MyDB";
         }
     }
 }

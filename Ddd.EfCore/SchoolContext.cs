@@ -9,6 +9,9 @@ namespace Ddd.EfCore
         private readonly bool _useConsoleLogger;
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
 
         public SchoolContext(string connectionString, bool useConsoleLogger)
         {
@@ -18,21 +21,46 @@ namespace Ddd.EfCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<Course>(x =>
             {
                 x.ToTable("Course").HasKey(k => k.Id);
-                x.Property(p => p.Id).HasColumnName("CourseID");
+                x.Property(p => p.Id).ValueGeneratedNever()
+                                     .HasColumnName("CourseID");
+                x.Property(p => p.Name);
+            });
+
+            modelBuilder.Entity<Subject>(x =>
+            {
+                x.ToTable("Subject").HasKey(k => k.Id);
+                x.Property(p => p.Id).ValueGeneratedNever()
+                                     .HasColumnName("SubjectID");
                 x.Property(p => p.Name);
             });
 
             modelBuilder.Entity<Student>(x =>
             {
                 x.ToTable("Student").HasKey(k => k.Id);
-                x.Property(p => p.Id).HasColumnName("StudentID");
+                x.Property(p => p.Id).ValueGeneratedNever()
+                                     .HasColumnName("StudentID");
                 x.Property(p => p.Email);
                 x.Property(p => p.Name);
+
                 x.HasOne(p => p.FavoriteCourse).WithMany();
+                x.HasMany(p => p.Enrollments).WithOne(p => p.Student)
+                                             .Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+                x.HasMany(p => p.Subjects).WithOne();
+            });
+
+            modelBuilder.Entity<Enrollment>(x =>
+            {
+                x.ToTable("Enrollment").HasKey(k => k.Id);
+                x.Property(p => p.Id).ValueGeneratedNever()
+                                     .HasColumnName("EnrollmentID");
+                x.Property(p => p.Grade);
+
+                x.HasOne(p => p.Student).WithMany(p => p.Enrollments);
+                x.HasOne(p => p.Course);
             });
         }
 
@@ -41,7 +69,8 @@ namespace Ddd.EfCore
             ILoggerFactory loggerFactory = CriarLogger();
 
             optionsBuilder.UseLazyLoadingProxies()
-                           .UseInMemoryDatabase(_connectionString);
+            //optionsBuilder
+                          .UseInMemoryDatabase(_connectionString);
                           
 
             if(_useConsoleLogger)

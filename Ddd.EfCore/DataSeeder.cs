@@ -5,12 +5,23 @@ namespace Ddd.EfCore
     {
         public static void Seed(SchoolContext context)
         {
-            var courseOne = new Course(1L, "Course One");
-            var courseTwo = new Course(2L, "Course Two");
+            var studentMurilo = new Student("Murilo", "murilando@gmail.com", Course.Calculus);
+            var studentJoao = new Student("João", "joao@gmail.com", Course.Calculus);
+            var studentJose = new Student("José", "jose@gmail.com", Course.Chemistry);
 
-            context.Students.Add(new Student(1L, "Murilo", "murilando@gmail.com", courseOne));
-            context.Students.Add(new Student(2L, "Pedro", "pedroperez@gmail.com", courseOne));
-            context.Students.Add(new Student(3L, "Leonardo", "leonardomancuso@gmail.com", courseTwo));
+            TestsConfig.PrimaryKeys.Add("studentMurilo", studentMurilo.Id);
+            TestsConfig.PrimaryKeys.Add("studentJoao", studentJoao.Id);
+            TestsConfig.PrimaryKeys.Add("studentJose", studentJose.Id);
+
+            studentMurilo.AddSubject(new Subject("Subject 1"));
+            studentMurilo.AddSubject(new Subject("Subject 2"));
+
+   
+            context.Students.Add(studentMurilo);
+            context.Students.Add(studentJoao);
+            context.Students.Add(studentJose);
+
+      
 
             context.SaveChanges();
         }

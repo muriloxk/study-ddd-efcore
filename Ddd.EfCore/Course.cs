@@ -1,14 +1,27 @@
-﻿namespace Ddd.EfCore
+﻿using System;
+using System.Linq;
+
+namespace Ddd.EfCore
 {
-    public class Course
+    //Enumeration Pattern
+    public class Course : Entity
     {
-        public Course(long id, string name)
+        public static readonly Course Calculus = new Course("Calculus");
+        public static readonly Course Chemistry = new Course("Chemistry");
+        public static readonly Course[] AllCourses = { Calculus, Chemistry };
+
+        protected Course() { }
+
+        private Course(string name) : this()
         {
-            Id = id;
             Name = name;
         }
 
-        public long Id { get; private set; }
         public string Name { get; private set; }
+
+        public static Course FromId(Guid id)
+        {
+            return AllCourses.SingleOrDefault(x => x.Id == id);
+        }
     }
 }
