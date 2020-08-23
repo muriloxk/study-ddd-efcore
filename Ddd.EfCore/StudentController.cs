@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ddd.EfCore
 {
@@ -17,9 +18,9 @@ namespace Ddd.EfCore
             _courseRepository = new CourseRepository(context);
         }
 
-        public string CheckStudentFavoriteCourse(Guid studentId, Guid courseId)
+        public async Task<string> CheckStudentFavoriteCourse(Guid studentId, Guid courseId)
         {
-            Student student = _studentRepository.GetById(studentId);
+            Student student = await _studentRepository.GetByIdAsync(studentId);
             if (student == null)
                 return "Student not found";
 
@@ -30,19 +31,41 @@ namespace Ddd.EfCore
            return student.FavoriteCourse == course ? "Yes" : "No";
         }
 
-        public string AddEnrollment(Guid studentId, Guid courseId, Grade grade)
+        public async Task<string> AddEnrollment(Guid studentId, Guid courseId, Grade grade)
         {
-            Student student = _studentRepository.GetById(studentId);
+            Student student = await _studentRepository.GetByIdAsync(studentId);
             if (student == null)
                 return "Student not found";
 
-            Course course = _courseRepository.GetById(courseId);
+            Course course = await _courseRepository.GetByIdAsync(courseId);
             if (course == null)
                 return "Course not found";
 
             student.EnrollIn(course, Grade.A);
             student.EnrollIn(course, Grade.A);
 
+            _context.SaveChanges();
+
+            //tests
+            //var courses = _context.Courses.ToList();
+            //var enrollments = _context.Enrollments.ToList();
+            //var students = _context.Students.ToList();
+
+            return "OK";
+        }
+
+
+        public async Task<string> Disenrollment(Guid studentId, Guid courseId)
+        {
+            Student student = await _studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+                return "Student not found";
+
+            Course course = await _courseRepository.GetByIdAsync(courseId);
+            if (course == null)
+                return "Course not found";
+
+            student.Disenroll(course);
             _context.SaveChanges();
 
             //tests

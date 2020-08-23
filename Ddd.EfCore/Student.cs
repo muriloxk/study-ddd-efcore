@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ddd.EfCore
@@ -14,7 +15,6 @@ namespace Ddd.EfCore
 
         private readonly List<Subject> _subjects = new List<Subject>();
         public virtual IReadOnlyList<Subject> Subjects => _subjects.ToList();
-
 
         protected Student() { }
 
@@ -41,6 +41,16 @@ namespace Ddd.EfCore
         public void AddSubject(Subject subject)
         {
             _subjects.Add(subject);
+        }
+
+        public void Disenroll(Course course)
+        {
+            Enrollment enrollment = _enrollments.FirstOrDefault(x => x.Course == course);
+
+            if (enrollment == null)
+                return;
+
+            _enrollments.Remove(enrollment);
         }
     }
 }

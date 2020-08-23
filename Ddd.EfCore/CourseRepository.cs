@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace Ddd.EfCore
 {
     public class CourseRepository
@@ -10,9 +12,9 @@ namespace Ddd.EfCore
             _context = context;
         }
 
-        public Course GetById(Guid courseId)
+        public async Task<Course> GetByIdAsync(Guid courseId)
         {
-            return _context.Courses.Find(courseId);
+            return await _context.Courses.FindAsync(courseId);
         }
     }
 }

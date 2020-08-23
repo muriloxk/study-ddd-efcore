@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace Ddd.EfCore
 {
     public class StudentRepository
@@ -10,9 +12,12 @@ namespace Ddd.EfCore
             _context = context;
         }
 
-        public Student GetById(Guid studentId)
+        public async Task<Student> GetByIdAsync(Guid studentId)
         {
-           return _context.Students.Find(studentId);
+           var student = await _context.Students.FindAsync(studentId);
+           await _context.Entry(student).Collection(x => x.Enrollments).LoadAsync();
+
+           return student;
         }
 
         public void Save(Student student)

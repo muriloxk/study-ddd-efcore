@@ -47,6 +47,7 @@ namespace Ddd.EfCore
 
                 x.HasOne(p => p.FavoriteCourse).WithMany();
                 x.HasMany(p => p.Enrollments).WithOne(p => p.Student)
+                                             .OnDelete(DeleteBehavior.Cascade)
                                              .Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 
                 x.HasMany(p => p.Subjects).WithOne();

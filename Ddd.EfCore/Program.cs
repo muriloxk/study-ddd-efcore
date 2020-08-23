@@ -16,23 +16,26 @@ namespace Ddd.EfCore
             var connectionString = GetConnectionString();
             Seed(connectionString);
 
-            var responseCheckStudent = Execute(studentController => studentController.CheckStudentFavoriteCourse(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
-            Console.WriteLine(responseCheckStudent);
+            var responseCheckStudent =  Execute(studentController => studentController.CheckStudentFavoriteCourse(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
+            Console.WriteLine("responseCheckStudent: " + responseCheckStudent);
 
-            var responseAddEnrollment = Execute(studentController => studentController.AddEnrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Chemistry.Id, Grade.A));
-            Console.WriteLine(responseAddEnrollment);
+            var responseAddEnrollment = Execute( studentController => studentController.AddEnrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Chemistry.Id, Grade.A));
+            Console.WriteLine("responseAddEnrollment: " + responseAddEnrollment);
+
+            var responseDisenroll = Execute(studentController => studentController.Disenrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
+            Console.WriteLine("responseDisenroll: " + responseDisenroll);
 
             Console.ReadKey();
         }
 
-        private static string Execute(Func<StudentController, string> func)
+        private static async Task<string> Execute(Func<StudentController,Task<string>> func)
         {
             var connectionString = GetConnectionString();
 
             using (var context = new SchoolContext(connectionString, true))
             {
                 var controller = new StudentController(context);
-                return func(controller);
+                return await func(controller);
             }
         }
 
