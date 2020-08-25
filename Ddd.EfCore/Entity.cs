@@ -1,14 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Ddd.EfCore
 {
     public abstract class Entity
     {
+        private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
+        public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents;
+
         public Guid Id { get; }
 
         protected Entity()
         {
             Id = Guid.NewGuid();
+        }
+
+        protected void RaiseDomainEvent(IDomainEvent domainEvent)
+        {
+            _domainEvents.Add(domainEvent);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
         }
 
         public override bool Equals(object obj)

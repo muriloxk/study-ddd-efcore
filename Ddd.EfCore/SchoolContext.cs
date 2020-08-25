@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Ddd.EfCore
@@ -7,16 +9,40 @@ namespace Ddd.EfCore
     {
         private readonly string _connectionString;
         private readonly bool _useConsoleLogger;
+        private readonly EventDispatcher _eventDispatcher;
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Subject> Subjects { get; set; }
 
-        public SchoolContext(string connectionString, bool useConsoleLogger)
+        public SchoolContext(string connectionString, bool useConsoleLogger, EventDispatcher eventDispatcher)
         {
             _connectionString = connectionString;
             _useConsoleLogger = useConsoleLogger;
+            _eventDispatcher = eventDispatcher;
+        }
+
+        public override int SaveChanges()
+        {
+
+            List<Entity> entities = ChangeTracker
+                                    .Entries()
+                                    .Where(x => x.Entity is Entity)
+                                    .Select(x => (Entity)x.Entity)
+                                    .ToList();
+
+            int result = base.SaveChanges();
+
+            foreach(Entity entity in entities)
+            {
+                // dispatch events
+                // clear all events
+                _eventDispatcher.Dispatch(entity.DomainEvents);
+                entity.ClearDomainEvents();
+            }
+
+            return result;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

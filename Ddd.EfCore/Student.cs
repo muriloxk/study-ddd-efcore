@@ -70,6 +70,9 @@ namespace Ddd.EfCore
             if (course == null)
                 throw new ArgumentNullException();
 
+            if (Email != email)
+                RaiseDomainEvent(new StudentEmailChangedEvent(Id, Email));
+
             Name = name;
             Email = email;
             FavoriteCourse = course;

@@ -34,7 +34,7 @@ namespace Ddd.EfCore
         {
             var connectionString = GetConnectionString();
 
-            using (var context = new SchoolContext(connectionString, true))
+            using (var context = new SchoolContext(connectionString, true, GetEventDispatcher()))
             {
                 var controller = new StudentController(context);
                 return await func(controller);
@@ -43,10 +43,19 @@ namespace Ddd.EfCore
 
         private static void Seed(string connectionString)
         {
-            using (var context = new SchoolContext(connectionString, true))
+            using (var context = new SchoolContext(connectionString, true, GetEventDispatcher()))
             {
                 DataSeeder.Seed(context);
             }
+        }
+
+        private static EventDispatcher GetEventDispatcher()
+        {
+            IBus bus = new Bus();
+            var messageBus = new MessageBus(bus);
+            var eventDispatcher = new EventDispatcher(messageBus);
+
+            return eventDispatcher;
         }
 
         private static string GetConnectionString()
