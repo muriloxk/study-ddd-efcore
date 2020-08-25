@@ -5,10 +5,11 @@ namespace Ddd.EfCore
     {
         public static void Seed(SchoolContext context)
         {
-            var studentMurilo = new Student("Murilo", "murilando@gmail.com", Course.Calculus);
-            var studentJoao = new Student("João", "joao@gmail.com", Course.Calculus);
-            var studentJose = new Student("José", "jose@gmail.com", Course.Chemistry);
+            var studentMurilo = new Student("Murilo", Email.Create("murilando@gmail.com").Value, Course.Calculus) { NameValueObject = Name.Create("Murilo", "Sanches", Suffix.Sr).Value };
+            var studentJoao = new Student("João", Email.Create("joao@gmail.com").Value, Course.Calculus) { NameValueObject = Name.Create("João", "Sanches", Suffix.Sr).Value }; 
+            var studentJose = new Student("José", Email.Create("jose@gmail.com").Value, Course.Chemistry) { NameValueObject = Name.Create("José", "Sanches", Suffix.Sr).Value }; 
 
+            
             TestsConfig.PrimaryKeys.Add("studentMurilo", studentMurilo.Id);
             TestsConfig.PrimaryKeys.Add("studentJoao", studentJoao.Id);
             TestsConfig.PrimaryKeys.Add("studentJose", studentJose.Id);

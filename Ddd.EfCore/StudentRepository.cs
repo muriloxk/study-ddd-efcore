@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ddd.EfCore
 {
@@ -22,7 +23,7 @@ namespace Ddd.EfCore
 
         public void Save(Student student)
         {
-            _context.Students.Attach(student);
+            _context.Attach(student);
         }
     }
 }

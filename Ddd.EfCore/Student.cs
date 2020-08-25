@@ -7,7 +7,11 @@ namespace Ddd.EfCore
     public class Student : Entity
     {
         public string Name { get; private set; }
-        public string Email { get; private set; }
+
+        //Only test
+        public virtual Name NameValueObject { get; set; }
+
+        public Email Email { get;  set; }
         public virtual Course FavoriteCourse { get; private set; }
 
         private readonly List<Enrollment> _enrollments = new List<Enrollment>();
@@ -19,7 +23,7 @@ namespace Ddd.EfCore
         protected Student() { }
 
         public Student(string name,
-                       string email,
+                       Email email,
                        Course favoriteCourse)
             : this()
         {
@@ -51,6 +55,24 @@ namespace Ddd.EfCore
                 return;
 
             _enrollments.Remove(enrollment);
+        }
+
+        public void EditPersonalInfo(string name,
+                                     Email email,
+                                     Course course)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException();
+
+            if (Email == null)
+                throw new ArgumentNullException();
+
+            if (course == null)
+                throw new ArgumentNullException();
+
+            Name = name;
+            Email = email;
+            FavoriteCourse = course;
         }
     }
 }

@@ -42,15 +42,31 @@ namespace Ddd.EfCore
                 x.ToTable("Student").HasKey(k => k.Id);
                 x.Property(p => p.Id).ValueGeneratedNever()
                                      .HasColumnName("StudentID");
-                x.Property(p => p.Email);
-                x.Property(p => p.Name);
 
+                x.Property(p => p.Email)
+                        .HasConversion(p => p.Value, p => Email.Create(p).Value);
+
+                x.OwnsOne(p => p.NameValueObject, p =>
+                {
+                    p.Property(pp => pp.First).HasColumnName("FirstName");
+                    p.Property(pp => pp.Last).HasColumnName("LastName");
+                    p.HasOne(pp => pp.Suffix).WithMany().HasForeignKey("NameSuffixID").IsRequired(false);
+                });
+
+                x.Property(p => p.Name);
                 x.HasOne(p => p.FavoriteCourse).WithMany();
                 x.HasMany(p => p.Enrollments).WithOne(p => p.Student)
                                              .OnDelete(DeleteBehavior.Cascade)
                                              .Metadata.PrincipalToDependent.SetPropertyAccessMode(PropertyAccessMode.Field);
 
                 x.HasMany(p => p.Subjects).WithOne();
+            });
+
+            modelBuilder.Entity<Suffix>(x =>
+            {
+                x.ToTable("Suffix").HasKey(p => p.Id);
+                x.Property(p => p.Id).HasColumnName("SuffixID");
+                x.Property(p => p.Name);
             });
 
             modelBuilder.Entity<Enrollment>(x =>

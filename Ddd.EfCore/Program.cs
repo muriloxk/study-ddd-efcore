@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace Ddd.EfCore
 {
@@ -16,13 +10,21 @@ namespace Ddd.EfCore
             var connectionString = GetConnectionString();
             Seed(connectionString);
 
-            var responseCheckStudent =  Execute(studentController => studentController.CheckStudentFavoriteCourse(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
+            //await Execute(studentController => studentController.TestValueObject());
+
+            var responseEditPersonalInfoAsync = await Execute(studentController => studentController.EditPersonalInfoAsync(TestsConfig.PrimaryKeys["studentMurilo"], "Carlos", "carlos@hotmail.com", Course.Chemistry.Id));
+            Console.WriteLine("responseEditPersonalInfoAsync: " + responseEditPersonalInfoAsync);
+
+            var responseRegisterStudent = await Execute(studentController =>  studentController.RegisterStudentAsync("Carlos", "carlos@hotmail.com", Course.Calculus.Id));
+            Console.WriteLine("responseRegisterStudent: " + responseRegisterStudent);
+
+            var responseCheckStudent = await Execute(studentController =>  studentController.CheckStudentFavoriteCourse(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
             Console.WriteLine("responseCheckStudent: " + responseCheckStudent);
 
-            var responseAddEnrollment = Execute( studentController => studentController.AddEnrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Chemistry.Id, Grade.A));
+            var responseAddEnrollment = await Execute(studentController =>  studentController.AddEnrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Chemistry.Id, Grade.A));
             Console.WriteLine("responseAddEnrollment: " + responseAddEnrollment);
 
-            var responseDisenroll = Execute(studentController => studentController.Disenrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
+            var responseDisenroll = await Execute(studentController =>  studentController.Disenrollment(TestsConfig.PrimaryKeys["studentMurilo"], Course.Calculus.Id));
             Console.WriteLine("responseDisenroll: " + responseDisenroll);
 
             Console.ReadKey();
